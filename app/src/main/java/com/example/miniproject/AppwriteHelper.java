@@ -1,12 +1,16 @@
 package com.example.miniproject;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
 
 import java.util.Map;
 
 import io.appwrite.Client;
 import io.appwrite.ID;
+import io.appwrite.coroutines.Callback;
 import io.appwrite.coroutines.CoroutineCallback;
+import io.appwrite.exceptions.AppwriteException;
 import io.appwrite.models.Session;
 import io.appwrite.models.User;
 import io.appwrite.services.Account;
@@ -15,11 +19,12 @@ public class AppwriteHelper {
     private static AppwriteHelper instance;
     private Client client;
     private Account account;
+    private final Handler mainHandler = new Handler(Looper.getMainLooper());
+
 
     private AppwriteHelper(Context context) {
-        client = new Client(context)
-                .setEndpoint("https://Frankfurt.cloud.appwrite.io/v1")
-                .setProject("684459d500016ad059df");
+        client = new Client(context, "https://syd.cloud.appwrite.io/v1")
+                .setProject("683087d10014a6af0d7d");
 
         account = new Account(client);
     }
@@ -37,38 +42,60 @@ public class AppwriteHelper {
     }
 
     public void login(String email, String password, final AuthCallback<Session> callback) {
-        account.createEmailPasswordSession(email, password, new CoroutineCallback<>(result -> {
-            callback.onSuccess(result);
-            return null;
-        }, error -> {
-            callback.onError(error);
-            return null;
+        account.createEmailPasswordSession(email, password, new CoroutineCallback<>(new Callback<>() {
+            @Override
+            public void onComplete(Session result, Throwable error) {
+                if (error != null) {
+                    callback.onError((Exception) error);
+                } else if (result != null) {
+                    callback.onSuccess(result);
+                }
+            }
         }));
     }
 
-    public void register(String email, String password, final AuthCallback<User<Map<String, Object>>> callback) {
+    public void register(String email, String password, final AuthCallback<User<Map<String, Object>>> callback) throws AppwriteException {
+        if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            mainHandler.post(() -> callback.onError(new IllegalArgumentException("Email and password cannot be empty")));
+            return;
+        }
         account.create(
-                ID.unique(),
+                ID.Companion.unique(7),
                 email,
                 password,
-                null,
-                new CoroutineCallback<>(result -> {
-                    callback.onSuccess(result);
-                    return null;
-                }, error -> {
-                    callback.onError(error);
-                    return null;
+                "", // Empty string instead of null
+                new CoroutineCallback<>(new Callback<User<Map<String, Object>>>() {
+                    @Override
+                    public void onComplete(User<Map<String, Object>> result, Throwable error) {
+                        if (error != null) {
+                            mainHandler.post(() -> callback.onError((Exception) error));
+                        } else if (result != null) {
+                            mainHandler.post(() -> callback.onSuccess(result));
+                        }
+                    }
                 })
         );
     }
-
     public void logout(final AuthCallback<Object> callback) {
-        account.deleteSession("current", new CoroutineCallback<>(result -> {
-            callback.onSuccess(result);
-            return null;
-        }, error -> {
-            callback.onError(error);
-            return null;
+        account.getSession("current", new CoroutineCallback<>(new Callback<Session>() {
+            @Override
+            public void onComplete(Session result, Throwable error) {
+                if (error != null) {
+                    mainHandler.post(() -> callback.onError((Exception) error));
+                } else if (result != null) {
+                    account.deleteSession("current", new CoroutineCallback<>(new Callback<Object>() {
+                        @Override
+                        public void onComplete(Object result, Throwable error) {
+                            if (error != null) {
+                                mainHandler.post(() -> callback.onError((Exception) error));
+                            } else {
+                                mainHandler.post(() -> callback.onSuccess(result));
+                            }
+                        }
+                    }));
+                } else {
+                    mainHandler.post(() -> callback.onError(new Exception("No active session found")));
+                }
+            }
         }));
-    }
-}
+    }}

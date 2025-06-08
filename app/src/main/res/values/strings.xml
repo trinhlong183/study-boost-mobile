@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MiniProject</string>
+    <string name="appwrite_endpoint">https://syd.cloud.appwrite.io/v1</string>
+    <string name="appwrite_project_id">684459d500016ad059df</string>
 </resources>

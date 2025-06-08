@@ -36,6 +36,7 @@ android {
 }
 
 dependencies {
+    implementation ("io.appwrite:sdk-for-android:8.1.0")
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -45,5 +46,4 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation ("io.appwrite:sdk-for-android:8.1.0")
 }
