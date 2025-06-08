@@ -23,8 +23,11 @@ public class AppwriteHelper {
 
 
     private AppwriteHelper(Context context) {
-        client = new Client(context, "https://syd.cloud.appwrite.io/v1")
-                .setProject("683087d10014a6af0d7d");
+//        client = new Client(context, "https://syd.cloud.appwrite.io/v1")
+//                .setProject("683087d10014a6af0d7d");
+
+        client = new Client(context, "https://fra.cloud.appwrite.io/v1")
+                .setProject("684459d500016ad059df");
 
         account = new Account(client);
     }
@@ -54,28 +57,61 @@ public class AppwriteHelper {
         }));
     }
 
-    public void register(String email, String password, final AuthCallback<User<Map<String, Object>>> callback) throws AppwriteException {
+    public void register(String email, String password, final AuthCallback<User<Map<String, Object>>> callback) {
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
             mainHandler.post(() -> callback.onError(new IllegalArgumentException("Email and password cannot be empty")));
             return;
         }
-        account.create(
-                ID.Companion.unique(7),
-                email,
-                password,
-                "", // Empty string instead of null
-                new CoroutineCallback<>(new Callback<User<Map<String, Object>>>() {
-                    @Override
-                    public void onComplete(User<Map<String, Object>> result, Throwable error) {
-                        if (error != null) {
-                            mainHandler.post(() -> callback.onError((Exception) error));
-                        } else if (result != null) {
-                            mainHandler.post(() -> callback.onSuccess(result));
+        try {
+            account.create(
+                    ID.Companion.unique(7),
+                    email,
+                    password,
+                    "", // Empty string instead of null
+                    new CoroutineCallback<>(new Callback<User<Map<String, Object>>>() {
+                        @Override
+                        public void onComplete(User<Map<String, Object>> result, Throwable error) {
+                            if (error != null) {
+                                mainHandler.post(() -> callback.onError((Exception) error));
+                            } else if (result != null) {
+                                mainHandler.post(() -> callback.onSuccess(result));
+                            }
                         }
-                    }
-                })
-        );
+                    })
+            );
+        } catch (Exception e) {
+            mainHandler.post(() -> callback.onError(e));
+        }
     }
+
+    // Đăng ký với name, email, password
+    public void registerWithName(String name, String email, String password, final AuthCallback<User<Map<String, Object>>> callback) {
+        if (name == null || name.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
+            mainHandler.post(() -> callback.onError(new IllegalArgumentException("Name, email and password cannot be empty")));
+            return;
+        }
+        try {
+            account.create(
+                    ID.Companion.unique(7),
+                    email,
+                    password,
+                    name,
+                    new CoroutineCallback<>(new Callback<User<Map<String, Object>>>() {
+                        @Override
+                        public void onComplete(User<Map<String, Object>> result, Throwable error) {
+                            if (error != null) {
+                                mainHandler.post(() -> callback.onError((Exception) error));
+                            } else if (result != null) {
+                                mainHandler.post(() -> callback.onSuccess(result));
+                            }
+                        }
+                    })
+            );
+        } catch (Exception e) {
+            mainHandler.post(() -> callback.onError(e));
+        }
+    }
+
     public void logout(final AuthCallback<Object> callback) {
         account.getSession("current", new CoroutineCallback<>(new Callback<Session>() {
             @Override
@@ -98,4 +134,5 @@ public class AppwriteHelper {
                 }
             }
         }));
-    }}
+    }
+}
