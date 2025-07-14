@@ -22,6 +22,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".BottomTabActivity" />
 
         <activity android:name="io.appwrite.views.CallbackActivity" android:exported="true">
             <intent-filter android:label="android_web_auth">

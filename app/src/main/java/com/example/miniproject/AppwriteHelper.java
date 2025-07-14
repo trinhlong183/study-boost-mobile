@@ -45,14 +45,38 @@ public class AppwriteHelper {
     }
 
     public void login(String email, String password, final AuthCallback<Session> callback) {
+        // First check if there's already an active session
+        account.getSession("current", new CoroutineCallback<>(new Callback<Session>() {
+            @Override
+            public void onComplete(Session currentSession, Throwable sessionError) {
+                if (currentSession != null) {
+                    // Session already exists, delete it first
+                    account.deleteSession("current", new CoroutineCallback<>(new Callback<Object>() {
+                        @Override
+                        public void onComplete(Object deleteResult, Throwable deleteError) {
+                            // Whether deletion succeeds or fails, try to create new session
+                            createNewSession(email, password, callback);
+                        }
+                    }));
+                } else {
+                    // No active session, proceed with login
+                    createNewSession(email, password, callback);
+                }
+            }
+        }));
+    }
+
+    private void createNewSession(String email, String password, final AuthCallback<Session> callback) {
         account.createEmailPasswordSession(email, password, new CoroutineCallback<>(new Callback<>() {
             @Override
             public void onComplete(Session result, Throwable error) {
-                if (error != null) {
-                    callback.onError((Exception) error);
-                } else if (result != null) {
-                    callback.onSuccess(result);
-                }
+                mainHandler.post(() -> {
+                    if (error != null) {
+                        callback.onError((Exception) error);
+                    } else if (result != null) {
+                        callback.onSuccess(result);
+                    }
+                });
             }
         }));
     }
@@ -134,5 +158,43 @@ public class AppwriteHelper {
                 }
             }
         }));
+    }
+
+    // Check if user is currently logged in
+    public void getCurrentSession(final AuthCallback<Session> callback) {
+        account.getSession("current", new CoroutineCallback<>(new Callback<Session>() {
+            @Override
+            public void onComplete(Session result, Throwable error) {
+                mainHandler.post(() -> {
+                    if (error != null) {
+                        callback.onError((Exception) error);
+                    } else if (result != null) {
+                        callback.onSuccess(result);
+                    } else {
+                        callback.onError(new Exception("No active session"));
+                    }
+                });
+            }
+        }));
+    }
+
+    // Get current user information
+    public void getCurrentUser(final AuthCallback<User<Map<String, Object>>> callback) {
+        try {
+            account.get(new CoroutineCallback<>(new Callback<User<Map<String, Object>>>() {
+                @Override
+                public void onComplete(User<Map<String, Object>> result, Throwable error) {
+                    mainHandler.post(() -> {
+                        if (error != null) {
+                            callback.onError((Exception) error);
+                        } else if (result != null) {
+                            callback.onSuccess(result);
+                        }
+                    });
+                }
+            }));
+        } catch (Exception e) {
+            mainHandler.post(() -> callback.onError(e));
+        }
     }
 }

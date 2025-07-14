@@ -6,4 +6,11 @@
     </style>
 
     <style name="Theme.MiniProject" parent="Base.Theme.MiniProject" />
+
+    <!-- NumberPicker custom style -->
+    <style name="NumberPickerStyle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">#333333</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
 </resources>

@@ -38,6 +38,11 @@ android {
 dependencies {
     implementation ("io.appwrite:sdk-for-android:8.1.0")
 
+    // Navigation components
+    implementation("androidx.navigation:navigation-fragment:2.7.7")
+    implementation("androidx.navigation:navigation-ui:2.7.7")
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

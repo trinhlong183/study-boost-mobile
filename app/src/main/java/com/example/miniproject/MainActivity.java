@@ -48,6 +48,39 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(v -> login());
         buttonRegister.setOnClickListener(v -> openRegisterActivity());
         buttonLogout.setOnClickListener(v -> logout());
+
+        // Check if user is already logged in
+        checkExistingSession();
+    }
+
+    private void checkExistingSession() {
+        appwrite.getCurrentSession(new AppwriteHelper.AuthCallback<Session>() {
+            @Override
+            public void onSuccess(Session result) {
+                // User is already logged in, get user info and redirect
+                appwrite.getCurrentUser(new AppwriteHelper.AuthCallback<User<Map<String, Object>>>() {
+                    @Override
+                    public void onSuccess(User<Map<String, Object>> user) {
+                        runOnUiThread(() -> {
+                            String email = user.getEmail();
+                            showLoggedInUI(email);
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        // If can't get user info, show login UI
+                        runOnUiThread(() -> showLoginUI());
+                    }
+                });
+            }
+
+            @Override
+            public void onError(Exception error) {
+                // No active session, show login UI
+                runOnUiThread(() -> showLoginUI());
+            }
+        });
     }
 
     private void login() {
@@ -104,15 +137,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLoggedInUI(String email) {
-        editTextEmail.setVisibility(View.GONE);
-        editTextPassword.setVisibility(View.GONE);
-        buttonLogin.setVisibility(View.GONE);
-        buttonRegister.setVisibility(View.GONE);
-
-        textViewStatus.setVisibility(View.VISIBLE);
-        buttonLogout.setVisibility(View.VISIBLE);
-
-        textViewStatus.setText("Logged in as " + email);
+        Intent intent = new Intent(MainActivity.this, BottomTabActivity.class);
+        intent.putExtra("user_email", email);
+        startActivity(intent);
+        finish(); // Đóng MainActivity để người dùng không thể quay lại
     }
 
     private void showLoginUI() {
