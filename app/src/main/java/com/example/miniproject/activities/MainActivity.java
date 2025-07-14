@@ -1,4 +1,4 @@
-package com.example.miniproject;
+package com.example.miniproject.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.miniproject.R;
+import com.example.miniproject.api.AppwriteHelper;
 
 import java.util.Map;
 
