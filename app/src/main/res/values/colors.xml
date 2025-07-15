@@ -7,4 +7,5 @@
     <color name="selected_chat_room_bg">#E3F2FD</color>
     <color name="default_chat_room_bg">#FFFFFF</color>
     <color name="primary_color">#2196F3</color>
+    <color name="purple_500">#6200EE</color>
 </resources>

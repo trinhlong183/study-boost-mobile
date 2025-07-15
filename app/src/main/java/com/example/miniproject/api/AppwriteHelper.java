@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
+import java.util.List;
 import java.util.Map;
 
 import io.appwrite.Client;
@@ -35,8 +36,8 @@ public class AppwriteHelper {
         client = new Client(context, "https://syd.cloud.appwrite.io/v1")
                 .setProject("683087d10014a6af0d7d");
 
-//        client = new Client(context, "https://fra.cloud.appwrite.io/v1")
-//                .setProject("684459d500016ad059df");
+        // client = new Client(context, "https://fra.cloud.appwrite.io/v1")
+        // .setProject("684459d500016ad059df");
 
         account = new Account(client);
         databases = new Databases(client);
@@ -56,6 +57,7 @@ public class AppwriteHelper {
 
     public interface AuthCallback<T> {
         void onSuccess(T result) throws AppwriteException;
+
         void onError(Exception error);
     }
 
@@ -102,7 +104,8 @@ public class AppwriteHelper {
 
     public void register(String email, String password, final AuthCallback<User<Map<String, Object>>> callback) {
         if (email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            mainHandler.post(() -> callback.onError(new IllegalArgumentException("Email and password cannot be empty")));
+            mainHandler
+                    .post(() -> callback.onError(new IllegalArgumentException("Email and password cannot be empty")));
             return;
         }
         try {
@@ -126,17 +129,19 @@ public class AppwriteHelper {
                                 });
                             }
                         }
-                    })
-            );
+                    }));
         } catch (Exception e) {
             mainHandler.post(() -> callback.onError(e));
         }
     }
 
     // Đăng ký với name, email, password
-    public void registerWithName(String name, String email, String password, final AuthCallback<User<Map<String, Object>>> callback) {
-        if (name == null || name.isEmpty() || email == null || email.isEmpty() || password == null || password.isEmpty()) {
-            mainHandler.post(() -> callback.onError(new IllegalArgumentException("Name, email and password cannot be empty")));
+    public void registerWithName(String name, String email, String password,
+            final AuthCallback<User<Map<String, Object>>> callback) {
+        if (name == null || name.isEmpty() || email == null || email.isEmpty() || password == null
+                || password.isEmpty()) {
+            mainHandler.post(
+                    () -> callback.onError(new IllegalArgumentException("Name, email and password cannot be empty")));
             return;
         }
         try {
@@ -160,8 +165,7 @@ public class AppwriteHelper {
                                 });
                             }
                         }
-                    })
-            );
+                    }));
         } catch (Exception e) {
             mainHandler.post(() -> callback.onError(e));
         }

@@ -1,0 +1,21 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+    
+    <group android:name="rotationGroup"
+        android:pivotX="50"
+        android:pivotY="50">
+        
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M50,10 C72.09,10 90,27.91 90,50 C90,72.09 72.09,90 50,90 C27.91,90 10,72.09 10,50 C10,27.91 27.91,10 50,10 Z M50,20 C33.43,20 20,33.43 20,50 C20,66.57 33.43,80 50,80 C66.57,80 80,66.57 80,50 C80,33.43 66.57,20 50,20 Z" />
+        
+        <path
+            android:fillColor="#FF9800"
+            android:pathData="M50,15 L55,25 L50,35 L45,25 Z" />
+            
+    </group>
+    
+</vector>

@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import io.appwrite.exceptions.AppwriteException;
 import okhttp3.Call;
@@ -21,15 +22,22 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import org.json.JSONObject;
 
 public class HttpService {
     private static final String TAG = "HttpService";
     private static final String N8N_WEBHOOK_URL = Constants.API.N8N_WEBHOOK_URL;
-    
+
     private OkHttpClient client;
     private Gson gson;
     private ExecutorService executorService;
     private Handler mainHandler;
+
+    private static final OkHttpClient longTimeoutClient = new OkHttpClient.Builder()
+            .connectTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .build();
 
     public HttpService() {
         client = new OkHttpClient.Builder()
@@ -41,10 +49,12 @@ public class HttpService {
 
     public interface HttpCallback {
         void onSuccess(String aiResponse) throws AppwriteException;
+
         void onError(Exception error);
     }
 
-    public void sendMessageToN8n(String userId, String messageContent, String chatRoomId, boolean isFromUser, HttpCallback callback) {
+    public void sendMessageToN8n(String userId, String messageContent, String chatRoomId, boolean isFromUser,
+            HttpCallback callback) {
         executorService.execute(() -> {
             try {
                 // Create request body
@@ -58,9 +68,8 @@ public class HttpService {
                 Log.d(TAG, "Sending request to n8n: " + jsonBody);
 
                 RequestBody body = RequestBody.create(
-                    MediaType.get("application/json; charset=utf-8"),
-                    jsonBody
-                );
+                        MediaType.get("application/json; charset=utf-8"),
+                        jsonBody);
 
                 Request request = new Request.Builder()
                         .url(N8N_WEBHOOK_URL)
@@ -72,11 +81,11 @@ public class HttpService {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseBody = response.body().string();
                         Log.d(TAG, "n8n response: " + responseBody);
-                        
+
                         // Parse the response to get AI message
                         JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class);
                         String aiMessage = responseJson.get("message_content").getAsString();
-                        
+
                         // Return result on main thread
                         mainHandler.post(() -> {
                             try {
@@ -93,6 +102,43 @@ public class HttpService {
             } catch (Exception e) {
                 Log.e(TAG, "Error sending message to n8n", e);
                 mainHandler.post(() -> callback.onError(e));
+            }
+        });
+    }
+
+    public static void postJson(String url, JSONObject json, HttpCallback callback) {
+        // Use the long-timeout client for long-running workflows
+        OkHttpClient client = longTimeoutClient;
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        RequestBody body = RequestBody.create(
+                MediaType.get("application/json; charset=utf-8"),
+                json.toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                mainHandler.post(() -> callback.onError(e));
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful() && response.body() != null) {
+                    String responseBody = response.body().string();
+                    mainHandler.post(() -> {
+                        try {
+                            callback.onSuccess(responseBody);
+                        } catch (Exception e) {
+                            callback.onError(e);
+                        }
+                    });
+                } else {
+                    mainHandler.post(() -> callback
+                            .onError(new Exception("Request failed: " + response.code() + " - " + response.message())));
+                }
             }
         });
     }

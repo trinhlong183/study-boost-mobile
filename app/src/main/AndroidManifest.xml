@@ -38,6 +38,12 @@
 
         <activity android:name=".activities.RegisterActivity" />
 
+        <activity android:name=".activities.SurveyActivity" />
+
+        <activity android:name=".activities.SurveyLoadingActivity" />
+
+        <activity android:name=".activities.ScheduleActivity" />
+
     </application>
 
 

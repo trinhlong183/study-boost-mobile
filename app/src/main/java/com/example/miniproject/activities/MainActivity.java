@@ -56,6 +56,19 @@ public class MainActivity extends AppCompatActivity {
         checkExistingSession();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Check if returning from survey completion
+        Intent intent = getIntent();
+        if (intent != null && intent.getBooleanExtra("survey_completed", false)) {
+            // User completed survey, go directly to home
+            intent.removeExtra("survey_completed");
+            checkExistingSession();
+        }
+    }
+
     private void checkExistingSession() {
         appwrite.getCurrentSession(new AppwriteHelper.AuthCallback<Session>() {
             @Override
@@ -133,7 +146,8 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Exception error) {
                 runOnUiThread(() -> {
                     Log.e(TAG, "Logout failed", error);
-                    Toast.makeText(MainActivity.this, "Logout failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Logout failed: " + error.getMessage(), Toast.LENGTH_SHORT)
+                            .show();
                 });
             }
         });

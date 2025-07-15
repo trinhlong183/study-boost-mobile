@@ -1,5 +1,6 @@
 package com.example.miniproject.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -14,6 +15,7 @@ import com.example.miniproject.api.AppwriteHelper;
 import java.util.Map;
 
 import io.appwrite.models.User;
+import io.appwrite.models.Session;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editTextName;
@@ -46,23 +48,51 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            appwrite.registerWithName(name, email, password, new AppwriteHelper.AuthCallback<User<Map<String, Object>>>() {
-                @Override
-                public void onSuccess(User<Map<String, Object>> result) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(RegisterActivity.this, "Registration successful. Please login.", Toast.LENGTH_SHORT).show();
-                        finish();
-                    });
-                }
+            // Disable button to prevent multiple submissions
+            buttonRegister.setEnabled(false);
 
-                @Override
-                public void onError(Exception error) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(RegisterActivity.this, "Registration failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            appwrite.registerWithName(name, email, password,
+                    new AppwriteHelper.AuthCallback<User<Map<String, Object>>>() {
+                        @Override
+                        public void onSuccess(User<Map<String, Object>> result) {
+                            // After successful registration, automatically log in the user
+                            appwrite.login(email, password, new AppwriteHelper.AuthCallback<Session>() {
+                                @Override
+                                public void onSuccess(Session session) {
+                                    runOnUiThread(() -> {
+                                        Toast.makeText(RegisterActivity.this, "Registration and login successful!",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        // Now navigate to survey with logged-in user
+                                        Intent intent = new Intent(RegisterActivity.this, SurveyActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    });
+                                }
+
+                                @Override
+                                public void onError(Exception loginError) {
+                                    runOnUiThread(() -> {
+                                        buttonRegister.setEnabled(true);
+                                        Toast.makeText(RegisterActivity.this,
+                                                "Registration successful but login failed. Please login manually.",
+                                                Toast.LENGTH_LONG).show();
+                                        finish(); // Go back to login screen
+                                    });
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onError(Exception error) {
+                            runOnUiThread(() -> {
+                                buttonRegister.setEnabled(true);
+                                Toast.makeText(RegisterActivity.this, "Registration failed: " + error.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            });
+                            System.out.println(error.getMessage());
+                        }
                     });
-                    System.out.println(error.getMessage());
-                }
-            });
         });
 
         buttonBackToLogin.setOnClickListener(v -> finish());

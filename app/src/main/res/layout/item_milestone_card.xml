@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="3dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="#FFF3E0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎯"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/tvMilestoneNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="CỘT MỐC 1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="#FF8F00"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TẤT CẢ CỘT MỐC ▶"
+                android:textSize="10sp"
+                android:textColor="#FF8F00"
+                android:textStyle="bold"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📋 MÔ TẢ"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="#424242"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/tvMilestoneDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Viết và chạy thành chương trình thành công"
+            android:textSize="12sp"
+            android:textColor="#212121"
+            android:layout_marginBottom="6dp"
+            android:maxLines="2"
+            android:ellipsize="end"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⏰ HOÀN THÀNH"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:textColor="#424242"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/tvMilestoneCompletion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="11sp"
+            android:textColor="#424242"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
