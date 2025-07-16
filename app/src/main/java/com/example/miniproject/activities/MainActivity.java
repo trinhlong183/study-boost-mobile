@@ -7,7 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.example.miniproject.utils.CustomNotification;
+import com.google.android.material.textfield.TextInputLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -24,8 +25,9 @@ public class MainActivity extends AppCompatActivity {
 
     private EditText editTextEmail;
     private EditText editTextPassword;
+    private TextInputLayout passwordLayout;
     private Button buttonLogin;
-    private Button buttonRegister;
+    private TextView buttonRegister;
     private TextView textViewStatus;
     private Button buttonLogout;
     private AppwriteHelper appwrite;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
         // Initialize UI components
         editTextEmail = findViewById(R.id.editTextEmail);
         editTextPassword = findViewById(R.id.editTextPassword);
+        passwordLayout = findViewById(R.id.passwordLayout);
         buttonLogin = findViewById(R.id.buttonLogin);
         buttonRegister = findViewById(R.id.buttonRegister);
         textViewStatus = findViewById(R.id.textViewStatus);
@@ -50,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         // Set up click listeners
         buttonLogin.setOnClickListener(v -> login());
         buttonRegister.setOnClickListener(v -> openRegisterActivity());
-        buttonLogout.setOnClickListener(v -> logout());
 
         // Check if user is already logged in
         checkExistingSession();
@@ -91,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         String password = editTextPassword.getText().toString().trim();
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter email and password", Toast.LENGTH_SHORT).show();
+            CustomNotification.showWarning(this, "Vui lòng nhập email và mật khẩu");
             return;
         }
 
@@ -99,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Session result) {
                 runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Login successful", Toast.LENGTH_SHORT).show();
+                    CustomNotification.showSuccess(MainActivity.this, "Đăng nhập thành công");
                     showLoggedInUI(email);
                 });
             }
@@ -108,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
             public void onError(Exception error) {
                 runOnUiThread(() -> {
                     Log.e(TAG, "Login failed", error);
-                    Toast.makeText(MainActivity.this, "Login failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    CustomNotification.showError(MainActivity.this, "Đăng nhập thất bại: " + error.getMessage());
                 });
             }
         });
@@ -119,25 +121,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void logout() {
-        appwrite.logout(new AppwriteHelper.AuthCallback<Object>() {
-            @Override
-            public void onSuccess(Object result) {
-                runOnUiThread(() -> {
-                    Toast.makeText(MainActivity.this, "Logout successful", Toast.LENGTH_SHORT).show();
-                    showLoginUI();
-                });
-            }
-
-            @Override
-            public void onError(Exception error) {
-                runOnUiThread(() -> {
-                    Log.e(TAG, "Logout failed", error);
-                    Toast.makeText(MainActivity.this, "Logout failed: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-            }
-        });
-    }
 
     private void showLoggedInUI(String email) {
         Intent intent = new Intent(MainActivity.this, BottomTabActivity.class);
@@ -156,3 +139,4 @@ public class MainActivity extends AppCompatActivity {
         buttonLogout.setVisibility(View.GONE);
     }
 }
+

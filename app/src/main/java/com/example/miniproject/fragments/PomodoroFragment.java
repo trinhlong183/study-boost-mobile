@@ -55,7 +55,7 @@ public class PomodoroFragment extends Fragment {
         loadSavedBackground();
         
         // Thiết lập NumberPicker cho phút (5-60 phút)
-        minutePicker.setMinValue(5);
+        minutePicker.setMinValue(1);
         minutePicker.setMaxValue(60);
         minutePicker.setValue(25); // Giá trị mặc định 25 phút
         
