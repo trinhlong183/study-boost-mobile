@@ -4,29 +4,122 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:gravity="center">
+    android:paddingTop="32dp"
+    android:background="#F6F6FA">
 
-    <ImageView
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:src="@drawable/icon"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="Logo ứng dụng" />
+    <!-- Milestone Card -->
+    <LinearLayout
+        android:id="@+id/milestoneCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:paddingTop="32dp"
+        android:layout_marginBottom="12dp"
+        android:elevation="4dp"
+        android:clipToOutline="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:backgroundTintMode="src_in"
+        android:background="#EDEAFF">
+
+        <TextView
+            android:id="@+id/milestoneId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Milestone: 1"
+            android:textStyle="bold"
+            android:textColor="#6C63FF"
+            android:textSize="18sp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/milestoneDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description"
+            android:textColor="#3A3456"
+            android:textSize="15sp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:id="@+id/milestoneTargetCompletion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Target Completion"
+            android:textColor="#6C63FF"
+            android:textSize="14sp"
+            android:layout_marginBottom="2dp"/>
+    </LinearLayout>
+
+    <!-- Weekly Plan Card -->
+    <LinearLayout
+        android:id="@+id/weeklyPlanCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginBottom="12dp"
+        android:elevation="4dp"
+        android:clipToOutline="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:backgroundTintMode="src_in"
+        android:background="#EDEAFF">
+
+        <TextView
+            android:id="@+id/weeklyPlanWeek"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Week: 1"
+            android:textStyle="bold"
+            android:textColor="#6C63FF"
+            android:textSize="18sp"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/weeklyPlanFocus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Focus"
+            android:textColor="#3A3456"
+            android:textSize="15sp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:id="@+id/weeklyPlanTopics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Topics"
+            android:textColor="#3A3456"
+            android:textSize="14sp"
+            android:layout_marginBottom="2dp"/>
+
+        <TextView
+            android:id="@+id/weeklyPlanObjective"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Objective"
+            android:textColor="#6C63FF"
+            android:textSize="14sp"
+            android:layout_marginBottom="2dp"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lịch Học"
-        android:textSize="24sp"
+        android:text="Lịch học trong tuần"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="16dp"
+        android:textColor="#3A3456"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Quản lý thời khóa biểu và lịch học của bạn"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:textColor="@android:color/darker_gray" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewCalendar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp"/>
 
 </LinearLayout>

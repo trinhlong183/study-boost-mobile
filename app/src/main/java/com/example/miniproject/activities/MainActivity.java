@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.miniproject.R;
 import com.example.miniproject.api.AppwriteHelper;
+import com.example.miniproject.services.StudyScheduleService;
+import com.example.miniproject.activities.SurveyActivity;
 
 import java.util.Map;
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewStatus;
     private Button buttonLogout;
     private AppwriteHelper appwrite;
+    private StudyScheduleService studyScheduleService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize Appwrite
         appwrite = AppwriteHelper.getInstance(getApplicationContext());
+        studyScheduleService = new StudyScheduleService(getApplicationContext());
 
         setContentView(R.layout.activity_main);
 
@@ -100,9 +104,27 @@ public class MainActivity extends AppCompatActivity {
         appwrite.login(email, password, new AppwriteHelper.AuthCallback<Session>() {
             @Override
             public void onSuccess(Session result) {
-                runOnUiThread(() -> {
-                    CustomNotification.showSuccess(MainActivity.this, "Đăng nhập thành công");
-                    showLoggedInUI(email);
+                appwrite.getCurrentUser(new AppwriteHelper.AuthCallback<User<Map<String, Object>>>() {
+                    @Override
+                    public void onSuccess(User<Map<String, Object>> user) {
+                        String userId = user.getId();
+                        // Store userId in SharedPreferences
+                        getSharedPreferences("app_prefs", MODE_PRIVATE)
+                                .edit().putString("user_id", userId).apply();
+                        runOnUiThread(() -> {
+                            CustomNotification.showSuccess(MainActivity.this, "Đăng nhập thành công");
+                            checkStudyScheduleAndNavigate(userId, user.getEmail());
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        runOnUiThread(() -> {
+                            Log.e(TAG, "Failed to get user after login", error);
+                            CustomNotification.showError(MainActivity.this,
+                                    "Đăng nhập thất bại: " + error.getMessage());
+                        });
+                    }
                 });
             }
 
@@ -121,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-
     private void showLoggedInUI(String email) {
         Intent intent = new Intent(MainActivity.this, BottomTabActivity.class);
         intent.putExtra("user_email", email);
@@ -138,5 +159,33 @@ public class MainActivity extends AppCompatActivity {
         textViewStatus.setVisibility(View.GONE);
         buttonLogout.setVisibility(View.GONE);
     }
-}
 
+    private void checkStudyScheduleAndNavigate(String userId, String email) {
+        studyScheduleService.getStudyScheduleByUserId(userId,
+                new StudyScheduleService.StudyScheduleCallback<java.util.List<com.example.miniproject.models.StudySchedule>>() {
+                    @Override
+                    public void onSuccess(java.util.List<com.example.miniproject.models.StudySchedule> schedules) {
+                        runOnUiThread(() -> {
+                            if (schedules == null || schedules.isEmpty()) {
+                                Intent intent = new Intent(MainActivity.this, SurveyActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                showLoggedInUI(email);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Exception error) {
+                        runOnUiThread(() -> {
+                            Log.e(TAG, "Error checking study schedule", error);
+                            // Fallback: go to survey page if error
+                            Intent intent = new Intent(MainActivity.this, SurveyActivity.class);
+                            startActivity(intent);
+                            finish();
+                        });
+                    }
+                });
+    }
+}

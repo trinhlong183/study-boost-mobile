@@ -25,7 +25,7 @@ import okhttp3.Response;
 public class HttpService {
     private static final String TAG = "HttpService";
     private static final String N8N_WEBHOOK_URL = Constants.API.N8N_WEBHOOK_URL;
-    
+
     private OkHttpClient client;
     private Gson gson;
     private ExecutorService executorService;
@@ -41,10 +41,12 @@ public class HttpService {
 
     public interface HttpCallback {
         void onSuccess(String aiResponse) throws AppwriteException;
+
         void onError(Exception error);
     }
 
-    public void sendMessageToN8n(String userId, String messageContent, String chatRoomId, boolean isFromUser, HttpCallback callback) {
+    public void sendMessageToN8n(String userId, String messageContent, String chatRoomId, boolean isFromUser,
+            HttpCallback callback) {
         executorService.execute(() -> {
             try {
                 // Create request body
@@ -58,9 +60,8 @@ public class HttpService {
                 Log.d(TAG, "Sending request to n8n: " + jsonBody);
 
                 RequestBody body = RequestBody.create(
-                    MediaType.get("application/json; charset=utf-8"),
-                    jsonBody
-                );
+                        MediaType.get("application/json; charset=utf-8"),
+                        jsonBody);
 
                 Request request = new Request.Builder()
                         .url(N8N_WEBHOOK_URL)
@@ -72,11 +73,11 @@ public class HttpService {
                     if (response.isSuccessful() && response.body() != null) {
                         String responseBody = response.body().string();
                         Log.d(TAG, "n8n response: " + responseBody);
-                        
+
                         // Parse the response to get AI message
                         JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class);
                         String aiMessage = responseJson.get("message_content").getAsString();
-                        
+
                         // Return result on main thread
                         mainHandler.post(() -> {
                             try {
