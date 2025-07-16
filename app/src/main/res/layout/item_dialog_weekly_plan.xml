@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:layout_marginBottom="8dp"
+    android:background="@drawable/card_background"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/weekTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Week 1"
+        android:textColor="@color/accent_purple"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/focus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Focus: Sample focus area"
+        android:textColor="@color/text_dark"
+        android:textStyle="bold"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/topics"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Topics: Sample topics"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        android:lineSpacingExtra="2dp"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/objective"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Objective: Sample objective"
+        android:textColor="@color/text_dark"
+        android:textSize="13sp"
+        android:textStyle="italic" />
+
+</LinearLayout>

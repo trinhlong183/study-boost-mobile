@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#8576AE">
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:padding="24dp"
+        android:elevation="8dp"
+        android:layout_gravity="center">
+
+        <ImageView
+            android:id="@+id/successIcon"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@android:drawable/checkbox_on_background"
+            android:layout_gravity="center_horizontal"
+            android:padding="8dp" />
+
+        <TextView
+            android:id="@+id/successTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tạo lịch học thành công!"
+            android:textColor="#3A3456"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:layout_marginTop="16dp"
+            android:layout_gravity="center_horizontal" />
+
+        <TextView
+            android:id="@+id/successSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI đã tạo lịch học cá nhân dựa trên thông tin bạn cung cấp. Bạn có thể xem và tuỳ chỉnh lịch học này ngay bây giờ."
+            android:textColor="#3A3456"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:layout_gravity="center_horizontal" />
+
+        <Button
+            android:id="@+id/btnViewSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Xem lịch học →"
+            android:backgroundTint="#F4B183"
+            android:textColor="#fff"
+            android:textStyle="bold"
+            android:layout_marginTop="24dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🕒 Tối ưu thời gian"
+                android:textColor="#8576AE"
+                android:layout_marginEnd="16dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="📈 Nâng cao hiệu quả"
+                android:textColor="#8576AE" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout> 

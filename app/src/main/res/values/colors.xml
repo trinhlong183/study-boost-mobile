@@ -7,4 +7,11 @@
     <color name="selected_chat_room_bg">#E3F2FD</color>
     <color name="default_chat_room_bg">#FFFFFF</color>
     <color name="primary_color">#2196F3</color>
+    <color name="selector_day_text">#3A3456</color>
+    <color name="primary_blue">#6366F1</color>
+    <color name="accent_purple">#8B5CF6</color>
+    <color name="text_dark">#1F2937</color>
+    <color name="text_secondary">#6B7280</color>
+    <color name="background_light">#F8FAFC</color>
+    <color name="card_background">#FFFFFF</color>
 </resources>
